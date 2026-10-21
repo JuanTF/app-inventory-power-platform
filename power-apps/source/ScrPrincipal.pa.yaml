@@ -1,0 +1,492 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ScrPrincipal:
+    Properties:
+      Fill: =ColorValue("#F3F4F5")
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+    Children:
+      - Rectangle1_1:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(116, 116, 116, 1)
+            Height: =141
+            Width: =640
+      - GalProductos:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =Color.Transparent
+            Height: =668
+            Items: |-
+              =Search(
+                  TblProductos,
+                  Trim(TxtBuscarProducto.Text),
+                  Producto
+              )
+            TemplateFill: =Color.Transparent
+            TemplatePadding: =10
+            TemplateSize: =210
+            Width: =Parent.Width - 50
+            X: =25
+            Y: =375
+          Children:
+            - BtnFondoProducto:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        ColorValue("#E5E5E5"),
+                        Color.White
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =Parent.TemplateHeight
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =Self.Fill
+                  OnSelect: =Select(Parent)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Fill
+                  TabIndex: =-1
+                  Text: =
+                  Width: =Parent.TemplateWidth
+            - Rectangle2:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =ColorValue("#747474")
+                  Height: =Parent.TemplateHeight
+                  OnSelect: =Select(Parent)
+                  Visible: =ThisItem.IsSelected
+                  Width: =6
+            - Label4:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =41
+                  OnSelect: =Select(Parent)
+                  Size: =24
+                  Text: =ThisItem.Producto
+                  Width: =597
+                  X: =28
+                  Y: =3
+            - LblProducto:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        ColorValue("#111111"),
+                        ColorValue("#555555")
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =26
+                  OnSelect: =Select(Parent)
+                  Size: =16
+                  Text: =ThisItem.Categoria
+                  Width: =196
+                  X: =34
+                  Y: =50
+            - IcoDetalleProducto:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        ColorValue("#111111"),
+                        ColorValue("#555555")
+                    )
+                  Height: =33
+                  Icon: =Icon.ChevronRight
+                  OnSelect: |-
+                    =//Creando una variable global SET(NOMVAR, VALOR)
+                    Set(VarProducto, ThisItem)
+                    ;
+                    Navigate(ScrDetalle,ScreenTransition.UnCoverRight)
+                  Width: =33
+                  X: =497
+                  Y: =50
+            - LblEstadoStock:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =ColorValue("#A4262C")
+                  Fill: =ColorValue("#FCE4E4")
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =15
+                  Text: |-
+                    =If(
+                        Value(ThisItem.StockActual) = 0,
+                        "Agotado",
+                        "Bajo stock"
+                    )
+                  Visible: =Value(ThisItem.StockActual) <= Value(ThisItem.StockMinimo)
+                  Width: =145
+                  X: =IcoDetalleProducto.X - Self.Width - 12
+                  Y: =IcoDetalleProducto.Y + (IcoDetalleProducto.Height - Self.Height) / 2
+            - Label3_2:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        ColorValue("#111111"),
+                        ColorValue("#555555")
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =59
+                  OnSelect: =Select(Parent)
+                  Size: =16
+                  Text: ="Stck Actual"
+                  Width: =181
+                  X: =34
+                  Y: =118
+            - Label3_3:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        ColorValue("#111111"),
+                        ColorValue("#555555")
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =56
+                  OnSelect: =Select(Parent)
+                  Size: =16
+                  Text: ="Stck Min"
+                  Width: =149
+                  X: =214
+                  Y: =121
+            - Label4_2:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        Value(ThisItem.StockActual) <= Value(ThisItem.StockMinimo),
+                        ColorValue("#B54A4A"),
+                        ColorValue("#252525")
+                    )
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =31
+                  OnSelect: =Select(Parent)
+                  Size: =20
+                  Text: =ThisItem.StockActual
+                  Width: =100
+                  X: =34
+                  Y: =169
+            - Label4_3:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =31
+                  OnSelect: =Select(Parent)
+                  Size: =20
+                  Text: =ThisItem.StockMinimo
+                  Width: =100
+                  X: =214
+                  Y: =169
+            - Label4_4:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        ColorValue("#111111"),
+                        ColorValue("#555555")
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =49
+                  OnSelect: =Select(Parent)
+                  Size: =16
+                  Text: |-
+                    ="Ubicación: " & ThisItem.Ubicacion
+                  Width: =251
+                  X: =34
+                  Y: =72
+            - Label5:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  OnSelect: =Select(Parent)
+                  Size: =20
+                  Text: |-
+                    ="S/ " & Text(
+                        Value(ThisItem.PrecioVenta),
+                        "[$-en-US]#,##0.00",
+                        "en-US"
+                    )
+                  Width: =168
+                  X: =364
+                  Y: =169
+            - Label3_5:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        ColorValue("#111111"),
+                        ColorValue("#555555")
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =56
+                  OnSelect: =Select(Parent)
+                  Size: =16
+                  Text: ="Precio de venta"
+                  Width: =168
+                  X: =364
+                  Y: =121
+            - Rectangle3:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        RGBA(80, 80, 80, 1),
+                        RGBA(210, 210, 210, 1)
+                    )
+                  Height: =2
+                  OnSelect: =Select(Parent)
+                  Width: =480
+                  X: =41
+                  Y: =123
+            - Rectangle3_1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        RGBA(80, 80, 80, 1),
+                        RGBA(210, 210, 210, 1)
+                    )
+                  Height: =64
+                  OnSelect: =Select(Parent)
+                  Width: =2
+                  X: =172
+                  Y: =138
+            - Rectangle3_2:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: |-
+                    =If(
+                        ThisItem.IsSelected,
+                        RGBA(80, 80, 80, 1),
+                        RGBA(210, 210, 210, 1)
+                    )
+                  Height: =64
+                  OnSelect: =Select(Parent)
+                  Width: =2
+                  X: =338
+                  Y: =138
+      - Label1_1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Size: =25
+            Text: ="PRINCIPAL"
+            Width: =640
+            Y: =34
+      - Icon1:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Icon: =Icon.Add
+            OnSelect: |-
+              =NewForm(FrmProductos)
+              ;
+              Navigate(ScrNuevo,ScreenTransition.Cover)
+            X: =534
+            Y: =38
+      - Icon9:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Icon: =Icon.Reload
+            OnSelect: =Refresh(TblProductos)
+            X: =40
+            Y: =40
+      - BtnVolverInicio:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(80, 80, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =ColorValue("#F3F4F5")
+            Font: =Font.'Open Sans'
+            Height: =47
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(210, 210, 210, 1)
+            OnSelect: |-
+              =Reset(TxtUsuario);
+              Reset(TxtContrasenia);
+              Navigate(
+                  ScrInicio,
+                  ScreenTransition.Fade
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(80, 80, 80, 1)
+            Size: =22
+            Text: ="Volver al acceso"
+            Width: =558
+            X: =40
+            Y: =1055
+      - BtnActualizarBI:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorValue("#BDBDBD")
+            BorderThickness: =0
+            Color: =Color.White
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: |-
+              =If(
+                  varSolicitandoActualizacion,
+                  DisplayMode.Disabled,
+                  DisplayMode.Edit
+              )
+            Fill: =ColorValue("#326B9F")
+            Font: =Font.'Open Sans'
+            Height: =65
+            HoverBorderColor: =ColorValue("#747474")
+            HoverColor: =ColorValue("#333333")
+            HoverFill: =ColorFade(Self.Fill, -10%)
+            OnSelect: |-
+              =Set(varSolicitandoActualizacion, true);
+              IfError(
+                  Set(
+                      varRespuestaActualizacion,
+                      Inventory_ActualizarReporteInventario.Run()
+                  ),
+                  Notify(
+                      "No se pudo solicitar la actualización. Revisa el historial del flujo.",
+                      NotificationType.Error
+                  ),
+                  Notify(
+                      varRespuestaActualizacion.mensaje,
+                      NotificationType.Information
+                  )
+              );
+              Set(varSolicitandoActualizacion, false)
+            PressedBorderColor: =ColorValue("#747474")
+            PressedColor: =Color.White
+            PressedFill: =ColorFade(Self.Fill, -20%)
+            Size: =18
+            Text: |-
+              =If(
+                  varSolicitandoActualizacion,
+                  "Enviando solicitud...",
+                  "Actualizar BI"
+              )
+            X: =30
+            Y: =160
+      - BtnActualizarBI_1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorValue("#BDBDBD")
+            BorderThickness: =0
+            Color: =Color.White
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =ColorValue("#287D78")
+            Font: =Font.'Open Sans'
+            Height: =65
+            HoverBorderColor: =ColorValue("#747474")
+            HoverColor: =ColorValue("#333333")
+            HoverFill: =ColorFade(Self.Fill, -10%)
+            OnSelect: =Launch("https://teams.microsoft.com/l/app/?titleId=T_721a1efa-d58c-5d41-6a87-2db7371d09cd")
+            PressedBorderColor: =ColorValue("#747474")
+            PressedColor: =Color.White
+            PressedFill: =ColorFade(Self.Fill, -20%)
+            Size: =18
+            Text: ="Asistente IA"
+            X: =330
+            Y: =160
+      - TxtBuscarProducto:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =ColorValue("#B7B7B7")
+            BorderThickness: =1
+            Color: =ColorValue("#303030")
+            Default: =
+            DelayOutput: =true
+            Fill: =Color.White
+            FocusedBorderColor: =ColorValue("#747474")
+            Font: =Font.'Open Sans'
+            Height: =60
+            HintText: ="Buscar producto..."
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            PaddingLeft: =55
+            Width: =Parent.Width - 60
+            X: =30
+            Y: =245
+      - Icon2:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =ColorValue("#747474")
+            Height: =30
+            Icon: =Icon.Search
+            Width: =30
+            X: =45
+            Y: =260
+      - Label3:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =ColorValue("#252525")
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =40
+            Size: =24
+            Text: ="Productos"
+            Width: =300
+            X: =30
+            Y: =324

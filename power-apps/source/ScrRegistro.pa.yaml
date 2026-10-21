@@ -1,0 +1,318 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ScrRegistro:
+    Properties:
+      Fill: =RGBA(204, 218, 228, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+    Children:
+      - Rectangle1_4:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(36, 75, 85, 1)
+            Height: =141
+            Width: =640
+      - Label1_4:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Size: =25
+            Text: ="REGISTRO DE USUARIO"
+            Width: =640
+            Y: =34
+      - CntRegistro_1:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =835
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Width: =568
+            X: =33
+            Y: =171
+          Children:
+            - Label2_2:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="NOMBRE COMPLETO:"
+                  Width: =500
+                  X: =36
+                  Y: =3
+            - Label2_3:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="USUARIO:"
+                  Width: =500
+                  X: =36
+                  Y: =144
+            - TxtRegNombre:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Default: =
+                  Font: =Font.'Open Sans'
+                  HintText: ="Ingrese su nombre completo"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Size: =18
+                  Width: =500
+                  X: =36
+                  Y: =72
+            - TxtRegUsuario:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Default: =
+                  Font: =Font.'Open Sans'
+                  HintText: ="Ingrese su usuario"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Size: =18
+                  Width: =500
+                  X: =36
+                  Y: =219
+            - BtnRegistro:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =ColorValue("#FFFFFF")
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =ColorValue("#244B55")
+                  Font: =Font.'Open Sans'
+                  Height: =68
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =ColorValue("#FFFFFF")
+                  HoverFill: =ColorValue("#30616D")
+                  OnSelect: |-
+                    =If(
+                        IsBlank(Trim(TxtRegNombre.Text)) Or
+                        IsBlank(Trim(TxtRegUsuario.Text)) Or
+                        IsBlank(Trim(TxtRegCorreo.Text)) Or
+                        IsBlank(TxtRegContrasenia.Text) Or
+                        IsBlank(TxtRegConfirmar.Text),
+
+                        Notify(
+                            "Complete todos los campos.",
+                            NotificationType.Warning
+                        ),
+
+                        Not(IsMatch(Trim(TxtRegCorreo.Text), Match.Email)),
+
+                        Notify(
+                            "Ingrese un correo válido.",
+                            NotificationType.Warning
+                        ),
+
+                        TxtRegContrasenia.Text <> TxtRegConfirmar.Text,
+
+                        Notify(
+                            "Las contraseñas no coinciden.",
+                            NotificationType.Warning
+                        ),
+
+                        Refresh(UserInventory);
+                        If(
+                            Not(
+                                IsBlank(
+                                    LookUp(
+                                        UserInventory,
+                                        Usuario = Trim(TxtRegUsuario.Text),
+                                        ID
+                                    )
+                                )
+                            ),
+
+                            Notify(
+                                "Este usuario ya está registrado.",
+                                NotificationType.Warning
+                            ),
+
+                            Not(
+                                IsBlank(
+                                    LookUp(
+                                        UserInventory,
+                                        Correo = Lower(Trim(TxtRegCorreo.Text)),
+                                        ID
+                                    )
+                                )
+                            ),
+
+                            Notify(
+                                "Este correo ya está registrado.",
+                                NotificationType.Warning
+                            ),
+
+                            If(
+                                IfError(
+                                    Patch(
+                                        UserInventory,
+                                        Defaults(UserInventory),
+                                        {
+                                            NombreCompleto: Trim(TxtRegNombre.Text),
+                                            Usuario: Trim(TxtRegUsuario.Text),
+                                            Correo: Lower(Trim(TxtRegCorreo.Text)),
+                                            Contrasenia: TxtRegContrasenia.Text,
+                                            Estado: {Value: "Pendiente"}
+                                        }
+                                    );
+                                    true,
+
+                                    Notify(
+                                        "No se pudo registrar. Revise la conexión y los datos e inténtelo nuevamente.",
+                                        NotificationType.Error
+                                    );
+                                    false
+                                ),
+
+                                Notify(
+                                    "Registro enviado. Su cuenta está pendiente de aprobación.",
+                                    NotificationType.Success
+                                );
+                                Reset(TxtRegNombre);
+                                Reset(TxtRegUsuario);
+                                Reset(TxtRegCorreo);
+                                Reset(TxtRegContrasenia);
+                                Reset(TxtRegConfirmar)
+                            )
+                        )
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =ColorValue("#FFFFFF")
+                  PressedFill: =ColorValue("#183840")
+                  Text: ="REGISTRARME"
+                  Width: =500
+                  X: =36
+                  Y: =746
+            - Label2_4:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="CORREO:"
+                  Width: =500
+                  X: =36
+                  Y: =289
+            - Label2_5:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="CONTRASEÑA:"
+                  Width: =500
+                  X: =36
+                  Y: =430
+            - TxtRegCorreo:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Default: =
+                  Font: =Font.'Open Sans'
+                  HintText: ="Ingrese su correo"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Size: =18
+                  Width: =500
+                  X: =36
+                  Y: =358
+            - TxtRegContrasenia:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Default: =
+                  Font: =Font.'Open Sans'
+                  HintText: ="Ingrese su contraseña"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Mode: =TextMode.Password
+                  Size: =18
+                  Width: =500
+                  X: =36
+                  Y: =505
+            - Label2_6:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="CONFIRMAR CONTRASEÑA:"
+                  Width: =500
+                  X: =36
+                  Y: =575
+            - TxtRegConfirmar:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Default: =
+                  Font: =Font.'Open Sans'
+                  HintText: ="Repita su contraseña"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Mode: =TextMode.Password
+                  Size: =18
+                  Width: =500
+                  X: =36
+                  Y: =650
+      - Label6_1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(101, 109, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =80
+            Size: =19
+            Text: ="¿Todavía no tienes una cuenta?"
+            Width: =388
+            X: =123
+            Y: =1000
+      - BtnVolver:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderStyle: =BorderStyle.None
+            Color: =ColorValue("#244B55")
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =33
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =ColorValue("#183840")
+            HoverFill: =ColorValue("#DFE8EA")
+            OnSelect: =Navigate(ScrInicio)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =ColorValue("#142F36")
+            PressedFill: =ColorValue("#CCDADF")
+            Size: =18
+            Text: ="Iniciar sesión"
+            Underline: =true
+            Width: =488
+            X: =75
+            Y: =1071

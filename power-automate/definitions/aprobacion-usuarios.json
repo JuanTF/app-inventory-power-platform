@@ -1,0 +1,167 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "Cuando_se_crea_un_elemento": {
+      "recurrence": {
+        "frequency": "Minute",
+        "interval": 1
+      },
+      "evaluatedRecurrence": {
+        "frequency": "Minute",
+        "interval": 1
+      },
+      "splitOn": "@triggerOutputs()?['body/value']",
+      "type": "OpenApiConnection",
+      "inputs": {
+        "parameters": {
+          "dataset": "https://contoso.sharepoint.com/sites/AppInventory/",
+          "table": "a42c1826-9e07-42c9-8190-581b0747f1b3"
+        },
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetOnNewItems"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    }
+  },
+  "actions": {
+    "Iniciar_y_esperar_una_aprobación": {
+      "runAfter": {},
+      "type": "OpenApiConnectionWebhook",
+      "inputs": {
+        "parameters": {
+          "approvalType": "Basic",
+          "WebhookApprovalCreationInput/title": "Solicitud de aprobación de acceso | Sistema de Inventario",
+          "WebhookApprovalCreationInput/assignedTo": "responsable@example.com",
+          "WebhookApprovalCreationInput/details": "Se ha recibido una nueva solicitud de acceso al Sistema de Inventario que requiere su revisión.\n\nDATOS DEL SOLICITANTE\nNombre: @{triggerBody()?['Title']}\nCorreo: @{triggerBody()?['Correo']}\nUsuario: @{triggerBody()?['Nombres']}\n\nRevise los datos y seleccione Aprobar o Rechazar. Puede incluir un comentario para indicar el motivo de su decisión o cualquier observación relevante.",
+          "WebhookApprovalCreationInput/itemLink": "@triggerBody()?['{Link}']",
+          "WebhookApprovalCreationInput/itemLinkDescription": "Ver solicitud en Microsoft Lists",
+          "WebhookApprovalCreationInput/enableNotifications": true,
+          "WebhookApprovalCreationInput/enableReassignment": true
+        },
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_approvals",
+          "connectionName": "shared_approvals",
+          "operationId": "StartAndWaitForAnApproval"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "Condición": {
+      "actions": {
+        "Actualizar_elemento": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "dataset": "https://contoso.sharepoint.com/sites/AppInventory/",
+              "table": "a42c1826-9e07-42c9-8190-581b0747f1b3",
+              "id": "@triggerBody()?['ID']",
+              "item/Estado/Value": "Activo"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "shared_sharepointonline",
+              "operationId": "PatchItem"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Enviar_correo_electrónico_(V2)": {
+          "runAfter": {
+            "Actualizar_elemento": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "emailMessage/To": "@outputs('Actualizar_elemento')?['body/Correo']",
+              "emailMessage/Subject": "Registro aprobado | Sistema de Inventario",
+              "emailMessage/Body": "<p class=\"editor-paragraph\"><b><strong class=\"editor-text-bold\" style=\"font-size: 20px;\">Solicitud de r</strong></b><b><strong class=\"editor-text-bold\" style=\"font-size: 20px;\">egistro aprobada</strong></b></p><p class=\"editor-paragraph\"><br>Hola, @{outputs('Actualizar_elemento')?['body/Title']}:<br><br>Tu solicitud de registro en el Sistema de Inventario ha sido aprobada y tu usuario se encuentra activo.<br><br><u><span class=\"editor-text-underline\" style=\"font-size: 15px;\">DATOS DE TU CUENTA</span></u><br><br>Usuario: @{outputs('Actualizar_elemento')?['body/Nombres']}<br>Correo electrónico: @{outputs('Actualizar_elemento')?['body/Correo']}<br>Estado: <b><strong class=\"editor-text-bold\" style=\"color: rgb(97, 168, 17);\">Activo</strong></b><br><br>Puedes iniciar sesión con el usuario y la contraseña que elegiste durante el registro.<br></p><br><p class=\"editor-paragraph\">Acceder al Sistema de Inventario: [<u><span class=\"editor-text-underline\" style=\"color: rgb(74, 144, 226);\">AppInventory</span></u>]<br><br>Si tienes alguna dificultad para ingresar, comunícate con el responsable de la aplicación.<br><br>Saludos cordiales,<br><b><strong class=\"editor-text-bold\">Administración del Sistema de Inventario</strong></b></p>",
+              "emailMessage/Importance": "Normal"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+              "connectionName": "shared_office365",
+              "operationId": "SendEmailV2"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "runAfter": {
+        "Iniciar_y_esperar_una_aprobación": [
+          "Succeeded"
+        ]
+      },
+      "else": {
+        "actions": {
+          "Actualizar_elemento_1": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "dataset": "https://contoso.sharepoint.com/sites/AppInventory/",
+                "table": "a42c1826-9e07-42c9-8190-581b0747f1b3",
+                "id": "@triggerBody()?['ID']",
+                "item/Estado/Value": "Rechazado"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PatchItem"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Enviar_correo_electrónico_(V2)_1": {
+            "runAfter": {
+              "Actualizar_elemento_1": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "@outputs('Actualizar_elemento_1')?['body/Correo']",
+                "emailMessage/Subject": "Solicitud de registro no aprobada | Sistema de Inventario",
+                "emailMessage/Body": "<p class=\"editor-paragraph\"><b><strong class=\"editor-text-bold\" style=\"font-size: 20px;\">Solicitud de registro no aprobada</strong></b><br><br>Hola, @{outputs('Actualizar_elemento_1')?['body/Title']}:<br><br>Te informamos que tu solicitud de registro en el Sistema de Inventario no ha sido aprobada. Por este motivo, tu usuario no tiene habilitado el acceso a la aplicación.<br><br><u><span class=\"editor-text-underline\" style=\"font-size: 15px;\">DATOS DE TU SOLICITUD</span></u><br><br>Usuario: @{outputs('Actualizar_elemento_1')?['body/Nombres']}<br>Correo electrónico: @{outputs('Actualizar_elemento_1')?['body/Correo']}<br>Estado: <b><strong class=\"editor-text-bold\" style=\"color: rgb(208, 2, 27);\">Rechazado</strong></b><br><br>Si deseas conocer el motivo de esta decisión o solicitar una revisión, comunícate con el responsable de la aplicación e indica los datos de tu solicitud.<br><br>Gracias por tu interés en utilizar el Sistema de Inventario.<br><br>Saludos cordiales,<br><b><strong class=\"editor-text-bold\">Administración del Sistema de Inventario</strong></b></p>",
+                "emailMessage/Importance": "Normal"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          }
+        }
+      },
+      "expression": {
+        "and": [
+          {
+            "equals": [
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      "type": "If"
+    }
+  },
+  "outputs": {}
+}

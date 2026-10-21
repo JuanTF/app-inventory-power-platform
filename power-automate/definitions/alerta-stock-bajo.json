@@ -1,0 +1,154 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "undefined",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "Recurrence": {
+      "recurrence": {
+        "frequency": "Day",
+        "interval": "1",
+        "startTime": "2026-10-10T14:00:00Z",
+        "timeZone": "SA Pacific Standard Time"
+      },
+      "evaluatedRecurrence": {
+        "frequency": "Day",
+        "interval": "1",
+        "startTime": "2026-10-10T14:00:00Z",
+        "timeZone": "SA Pacific Standard Time"
+      },
+      "type": "Recurrence"
+    }
+  },
+  "actions": {
+    "Enumerar_las_filas_de_una_tabla": {
+      "runAfter": {},
+      "metadata": {
+        "01RE6K7OLDFW2POKTAMZB3GXYR2ZHBFCWY": "/PApps/PApps-Propios/db-Inventory.xlsx",
+        "tableId": "{5359F5DA-8A84-40B0-BC0F-FC27DD5971F5}"
+      },
+      "type": "OpenApiConnection",
+      "inputs": {
+        "parameters": {
+          "source": "me",
+          "drive": "b!fqu4MxZWdU2EYl5vG5tLwIO_IuPUZUNAoLAiKwcGXBaCHTARwlZ9RahqvknFaFXL",
+          "file": "01RE6K7OLDFW2POKTAMZB3GXYR2ZHBFCWY",
+          "table": "{5359F5DA-8A84-40B0-BC0F-FC27DD5971F5}"
+        },
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "GetItems"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "FiltrarStockBajo": {
+      "runAfter": {
+        "Enumerar_las_filas_de_una_tabla": [
+          "Succeeded"
+        ]
+      },
+      "type": "Query",
+      "inputs": {
+        "from": "@outputs('Enumerar_las_filas_de_una_tabla')?['body/value']",
+        "where": "@lessOrEquals(float(item()?['StockActual']),float(item()?['StockMinimo']))"
+      }
+    },
+    "Condición": {
+      "actions": {
+        "TablaProductos": {
+          "type": "Table",
+          "inputs": {
+            "from": "@body('FiltrarStockBajo')",
+            "format": "HTML",
+            "columns": [
+              {
+                "header": "Producto",
+                "value": "@item()?['Producto']"
+              },
+              {
+                "header": "Categoría",
+                "value": "@item()?['Categoria']"
+              },
+              {
+                "header": "Ubicación",
+                "value": "@item()?['Ubicacion']"
+              },
+              {
+                "header": "Stock actual",
+                "value": "@item()?['StockActual']"
+              },
+              {
+                "header": "Stock mínimo",
+                "value": "@item()?['StockMinimo']"
+              },
+              {
+                "header": "Unidad",
+                "value": "@item()?['UnidadMedida']"
+              }
+            ]
+          }
+        },
+        "Enviar_correo_electrónico_(V2)": {
+          "runAfter": {
+            "TablaConEstilo": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "emailMessage/To": "responsable@example.com",
+              "emailMessage/Subject": "Alerta de productos con bajo stock | Sistema de Inventario",
+              "emailMessage/Body": "<p class=\"editor-paragraph\">Hola Juan Tafur,<br><br>Durante la revisión programada del inventario, se identificaron productos cuyo stock actual es igual o inferior al mínimo establecido.<br><br><u><span class=\"editor-text-underline\">DETALLE DE PRODUCTOS</span></u></p><p class=\"editor-paragraph\">@{outputs('TablaConEstilo')}</p><p class=\"editor-paragraph\">Por favor, revisa las existencias y coordina la reposición necesaria para evitar faltantes.</p><br><p class=\"editor-paragraph\">Saludos cordiales,<br><b><strong class=\"editor-text-bold\">Administración del Sistema de Inventario</strong></b></p>",
+              "emailMessage/Importance": "Normal"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+              "connectionName": "shared_office365",
+              "operationId": "SendEmailV2"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "TablaConEstilo": {
+          "runAfter": {
+            "TablaProductos": [
+              "Succeeded"
+            ]
+          },
+          "type": "Compose",
+          "inputs": "@replace(\r\n  replace(\r\n    replace(\r\n      body('TablaProductos'),\r\n      '<table>',\r\n      '<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#333333;\">'\r\n    ),\r\n    '<th>',\r\n    '<th bgcolor=\"#EDEDED\" style=\"background-color:#EDEDED;color:#333333;border:1px solid #BFBFBF;padding:8px 10px;text-align:left;font-weight:bold;\">'\r\n  ),\r\n  '<td>',\r\n  '<td bgcolor=\"#FFFFFF\" style=\"background-color:#FFFFFF;border:1px solid #BFBFBF;padding:8px 10px;text-align:left;vertical-align:top;\">'\r\n)"
+        }
+      },
+      "runAfter": {
+        "FiltrarStockBajo": [
+          "Succeeded"
+        ]
+      },
+      "else": {
+        "actions": {}
+      },
+      "expression": {
+        "and": [
+          {
+            "greater": [
+              "@length(body('FiltrarStockBajo'))",
+              0
+            ]
+          }
+        ]
+      },
+      "type": "If"
+    }
+  }
+}

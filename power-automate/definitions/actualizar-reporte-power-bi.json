@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "undefined",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "manual": {
+      "type": "Request",
+      "kind": "PowerAppV2",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    }
+  },
+  "actions": {
+    "Actualizar_un_conjunto_de_datos": {
+      "runAfter": {},
+      "type": "OpenApiConnection",
+      "inputs": {
+        "parameters": {
+          "groupid": "myworkspace",
+          "datasetid": "f2615693-4f78-4b78-96ea-3e9ed6be32a7"
+        },
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+          "connectionName": "shared_powerbi",
+          "operationId": "RefreshDataset"
+        },
+        "authentication": {
+          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+          "type": "Raw"
+        }
+      }
+    },
+    "Responder_a_un_flujo_de_aplicación_Power_App": {
+      "runAfter": {
+        "Actualizar_un_conjunto_de_datos": [
+          "Succeeded"
+        ]
+      },
+      "type": "Response",
+      "kind": "PowerApp",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "mensaje": {
+              "title": "mensaje",
+              "type": "string",
+              "x-ms-content-hint": "TEXT",
+              "x-ms-dynamically-added": true
+            }
+          },
+          "additionalProperties": {}
+        },
+        "statusCode": 200,
+        "body": {
+          "mensaje": "Solicitud enviada. Power BI está procesando la actualización."
+        }
+      }
+    }
+  }
+}

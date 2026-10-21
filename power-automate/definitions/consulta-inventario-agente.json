@@ -1,0 +1,108 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "defaultToEmbeddedConnections": true
+  },
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "manual": {
+      "type": "Request",
+      "kind": "Skills",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      },
+      "metadata": {
+        "operationMetadataId": "b8f61c18-7224-4f8a-9c5f-72fbce5df764"
+      }
+    }
+  },
+  "actions": {
+    "Respond_to_the_agent": {
+      "type": "Response",
+      "kind": "Skills",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "productos": {
+              "title": "productos",
+              "description": "Productos del inventario con su categoría, unidad de medida, ubicación, stock actual, stock mínimo y precio de venta, en formato JSON.",
+              "type": "string",
+              "x-ms-content-hint": "TEXT",
+              "x-ms-dynamically-added": true
+            }
+          },
+          "additionalProperties": {}
+        },
+        "statusCode": 200,
+        "body": {
+          "productos": "@{string(body('Seleccionar'))}"
+        }
+      },
+      "runAfter": {
+        "Seleccionar": [
+          "SUCCEEDED"
+        ]
+      },
+      "metadata": {
+        "operationMetadataId": "81c94f73-dd52-465c-ad3b-a4686da63cc3"
+      }
+    },
+    "LeerProductos": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "parameters": {
+          "source": "me",
+          "drive": "b!fqu4MxZWdU2EYl5vG5tLwIO_IuPUZUNAoLAiKwcGXBaCHTARwlZ9RahqvknFaFXL",
+          "file": "01RE6K7OLDFW2POKTAMZB3GXYR2ZHBFCWY",
+          "table": "{5359F5DA-8A84-40B0-BC0F-FC27DD5971F5}"
+        },
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "operationId": "GetItems",
+          "connectionName": "shared_excelonlinebusiness"
+        }
+      },
+      "runAfter": {},
+      "metadata": {
+        "01RE6K7OLDFW2POKTAMZB3GXYR2ZHBFCWY": "/PApps/PApps-Propios/db-Inventory.xlsx",
+        "tableId": "{5359F5DA-8A84-40B0-BC0F-FC27DD5971F5}"
+      }
+    },
+    "Seleccionar": {
+      "type": "Select",
+      "inputs": {
+        "from": "@body('LeerProductos')?['value']",
+        "select": {
+          "Producto": "@item()?['Producto']",
+          "Categoria": "@item()?['Categoria']",
+          "UnidadMedida": "@item()?['UnidadMedida']",
+          "Ubicacion": "@item()?['Ubicacion']",
+          "StockActual": "@int(item()?['StockActual'])",
+          "StockMinimo": "@int(item()?['StockMinimo'])",
+          "PrecioVenta": "@float(item()?['PrecioVenta'])"
+        }
+      },
+      "runAfter": {
+        "LeerProductos": [
+          "SUCCEEDED"
+        ]
+      }
+    }
+  },
+  "outputs": {}
+}

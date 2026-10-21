@@ -1,0 +1,668 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ScrDetalle:
+    Properties:
+      Fill: =ColorValue("#EAF0F6")
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =UpdateContext(
+            {
+                locMostrarEliminar: false,
+                locEliminando: false
+            }
+        )
+    Children:
+      - Rectangle1_3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(50, 86, 160, 1)
+            Height: =141
+            Width: =640
+      - Label1_3:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =140
+            Size: =25
+            Text: ="DETALLE"
+            Width: =Parent.Width
+      - Icon4:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Icon: =Icon.Edit
+            OnSelect: |-
+              =EditForm(FrmProductos)
+              ;
+              Navigate(ScrNuevo,ScreenTransition.Cover)
+            X: =550
+            Y: =38
+      - Icon5:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Icon: =Icon.BackArrow
+            OnSelect: =Back(ScreenTransition.CoverRight)
+            X: =40
+            Y: =40
+      - Icon6:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Icon: =Icon.Trash
+            OnSelect: |-
+              =UpdateContext(
+                  {
+                      locProductoEliminar: GalProductos.Selected,
+                      locMostrarEliminar: true
+                  }
+              )
+            X: =468
+            Y: =38
+      - ContFondoDetalle:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =Color.White
+            Height: |+
+              =Parent.Height - 200
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            Width: |+
+              =Parent.Width - 60
+            X: =30
+            Y: =170
+      - FormViewer1:
+          Control: FormViewer@2.3.4
+          Layout: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DataSource: =TblProductos
+            Fill: =Color.Transparent
+            Height: =800
+            Item: =VarProducto
+            Width: |+
+              =Parent.Width - 100
+            X: =50
+            Y: =190
+          Children:
+            - Producto_DataCard2_2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="Producto"
+                  Default: =ThisItem.Producto
+                  DisplayName: =DataSourceInfo([@TblProductos],DataSourceInfo.DisplayName,Producto)
+                  Fill: =Color.Transparent
+                  Height: =110
+                  Required: =false
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =0
+                Children:
+                  - DataCardKey10_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =ColorValue("#454545")
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =30
+                        Size: =18
+                        Text: =Parent.DisplayName
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =10
+                        Y: =10
+                  - DataCardValue10_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =ColorValue("#202020")
+                        DisplayMode: =Parent.DisplayMode
+                        Font: =Font.'Open Sans'
+                        Height: =58
+                        PaddingBottom: |+
+                          =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: |+
+                          =22
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 20
+                        X: =15
+                        Y: =55
+                  - Separador1:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =ColorValue("#E1E5EB")
+                        Height: =2
+                        Width: =Parent.Width - 20
+                        X: =10
+                        Y: =105
+            - Categoria_DataCard2_2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="Categoria"
+                  Default: =ThisItem.Categoria
+                  DisplayName: =DataSourceInfo([@TblProductos],DataSourceInfo.DisplayName,Categoria)
+                  Fill: =Color.Transparent
+                  Height: =110
+                  Required: =false
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =1
+                Children:
+                  - DataCardKey8_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =ColorValue("#454545")
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =30
+                        Size: =18
+                        Text: =Parent.DisplayName
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =10
+                        Y: =10
+                  - DataCardValue8_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =ColorValue("#202020")
+                        DisplayMode: =Parent.DisplayMode
+                        Font: =Font.'Open Sans'
+                        Height: =58
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =22
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =15
+                        Y: =55
+                  - Separador1_1:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =ColorValue("#E1E5EB")
+                        Height: =2
+                        Width: =Parent.Width - 20
+                        X: =11
+                        Y: =111
+            - UnidadMedida_DataCard2_2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="UnidadMedida"
+                  Default: =ThisItem.UnidadMedida
+                  DisplayName: =DataSourceInfo([@TblProductos],DataSourceInfo.DisplayName,UnidadMedida)
+                  Fill: =Color.Transparent
+                  Height: =110
+                  Required: =false
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =2
+                Children:
+                  - DataCardKey14_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =ColorValue("#454545")
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =30
+                        Size: =18
+                        Text: ="Unidad de medida"
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =10
+                        Y: =10
+                  - DataCardValue14_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        DisplayMode: =Parent.DisplayMode
+                        Font: =Font.'Open Sans'
+                        Height: =58
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =22
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =15
+                        Y: =55
+                  - Separador1_2:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =ColorValue("#E1E5EB")
+                        Height: =2
+                        Width: =Parent.Width - 20
+                        X: =11
+                        Y: =111
+            - Ubicacion_DataCard2_2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="Ubicacion"
+                  Default: =ThisItem.Ubicacion
+                  DisplayName: =DataSourceInfo([@TblProductos],DataSourceInfo.DisplayName,Ubicacion)
+                  Fill: =Color.Transparent
+                  Height: =110
+                  Required: =false
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =3
+                Children:
+                  - DataCardKey13_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =ColorValue("#454545")
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =30
+                        Size: =18
+                        Text: ="Ubicación"
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =10
+                        Y: =10
+                  - DataCardValue13_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =ColorValue("#202020")
+                        DisplayMode: =Parent.DisplayMode
+                        Font: =Font.'Open Sans'
+                        Height: =58
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =22
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =15
+                        Y: |+
+                          =55
+                  - Separador1_3:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =ColorValue("#E1E5EB")
+                        Height: =2
+                        Width: =Parent.Width - 20
+                        X: =11
+                        Y: =111
+            - StockActual_DataCard2_2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="StockActual"
+                  Default: =ThisItem.StockActual
+                  DisplayName: =DataSourceInfo([@TblProductos],DataSourceInfo.DisplayName,StockActual)
+                  Fill: =Color.Transparent
+                  Height: =110
+                  Required: =false
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =4
+                Children:
+                  - DataCardKey11_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =ColorValue("#454545")
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =30
+                        Size: =18
+                        Text: ="Stock actual"
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =10
+                        Y: =10
+                  - DataCardValue11_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =ColorValue("#202020")
+                        DisplayMode: =Parent.DisplayMode
+                        Font: =Font.'Open Sans'
+                        Height: =58
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =22
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =15
+                        Y: =55
+                  - Separador1_4:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =ColorValue("#E1E5EB")
+                        Height: =2
+                        Width: =Parent.Width - 20
+                        X: =11
+                        Y: =111
+            - StockMinimo_DataCard2_2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="StockMinimo"
+                  Default: =ThisItem.StockMinimo
+                  DisplayName: =DataSourceInfo([@TblProductos],DataSourceInfo.DisplayName,StockMinimo)
+                  Fill: =Color.Transparent
+                  Height: =110
+                  Required: =false
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =5
+                Children:
+                  - DataCardKey12_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =ColorValue("#454545")
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =30
+                        Size: =18
+                        Text: ="Stock mínimo"
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =10
+                        Y: =10
+                  - DataCardValue12_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =ColorValue("#202020")
+                        DisplayMode: =Parent.DisplayMode
+                        Font: =Font.'Open Sans'
+                        Height: =58
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =22
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 20
+                        X: =15
+                        Y: =55
+                  - Separador1_5:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =ColorValue("#E1E5EB")
+                        Height: =2
+                        Width: =Parent.Width - 20
+                        X: =11
+                        Y: =108
+            - PrecioVenta_DataCard2_2:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicTextualView
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="PrecioVenta"
+                  Default: =ThisItem.PrecioVenta
+                  DisplayName: =DataSourceInfo([@TblProductos],DataSourceInfo.DisplayName,PrecioVenta)
+                  Fill: =Color.Transparent
+                  Height: =110
+                  Required: =false
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =6
+                Children:
+                  - DataCardKey9_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =ColorValue("#454545")
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =30
+                        Size: =18
+                        Text: ="Precio de venta"
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =10
+                        Y: =10
+                  - DataCardValue9_2:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        DisplayMode: =Parent.DisplayMode
+                        Font: =Font.'Open Sans'
+                        Height: =58
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =22
+                        Text: =Parent.Default
+                        Width: =Parent.Width - 20
+                        Wrap: =false
+                        X: =15
+                        Y: =55
+      - Button1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =Color.White
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =ColorValue("#35589D")
+            Font: =Font.'Open Sans'
+            Height: =65
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorValue("#29477F")
+            OnSelect: =Navigate(ScrPrincipal, ScreenTransition.None)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =ColorValue("#203863")
+            Size: =22
+            Text: ="Volver"
+            Width: =Parent.Width - 100
+            X: =50
+            Y: =998
+      - RectFondoEliminar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 0, 0, 0.40)
+            Height: =Parent.Height
+            Visible: =locMostrarEliminar
+            Width: =Parent.Width
+      - ContConfirmarEliminar:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Fill: =Color.White
+            Height: =335
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            Visible: =locMostrarEliminar
+            Width: =Parent.Width - 80
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =(Parent.Height - Self.Height) / 2
+          Children:
+            - TextPregunta:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =ColorValue("#303030")
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =40
+                  Size: =23
+                  Text: ="¿Eliminar producto?"
+                  Width: =Parent.Width - 50
+                  X: =25
+                  Y: =25
+            - TextCuerpo:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =ColorValue("#555555")
+                  Font: =Font.'Open Sans'
+                  Height: =145
+                  Size: =18
+                  Text: |-
+                    ="¿Deseas eliminar el producto «" &
+                    locProductoEliminar.Producto &
+                    "»?" &
+                    Char(10) & Char(10) &
+                    "Se eliminará del inventario. Esta acción no se puede deshacer desde la aplicación."
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =Parent.Width - 50
+                  X: =25
+                  Y: =80
+            - BtnCancelarEliminar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =ColorValue("#333333")
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: |-
+                    =If(
+                        locEliminando,
+                        DisplayMode.Disabled,
+                        DisplayMode.Edit
+                    )
+                  Fill: =ColorValue("#EAEAEA")
+                  Font: =Font.'Open Sans'
+                  Height: =55
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorValue("#DDDDDD")
+                  OnSelect: |-
+                    =UpdateContext({locMostrarEliminar: false})
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =18
+                  Text: ="Cancelar"
+                  Width: =(Parent.Width - 65) / 2
+                  X: =25
+                  Y: =250
+            - BtnConfirmarEliminar:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =Color.White
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: |-
+                    =If(
+                        locEliminando,
+                        DisplayMode.Disabled,
+                        DisplayMode.Edit
+                    )
+                  Fill: =ColorValue("#B54A4A")
+                  Font: =Font.'Open Sans'
+                  Height: =55
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorValue("#983D3D")
+                  OnSelect: |-
+                    =UpdateContext({locEliminando: true});
+
+                    If(
+                        IfError(
+                            Remove(
+                                TblProductos,
+                                locProductoEliminar
+                            );
+                            true,
+                            false
+                        ),
+
+                        UpdateContext(
+                            {
+                                locMostrarEliminar: false,
+                                locEliminando: false
+                            }
+                        );
+                        Notify(
+                            "Producto eliminado correctamente.",
+                            NotificationType.Success
+                        );
+                        Navigate(
+                            ScrPrincipal,
+                            ScreenTransition.None
+                        ),
+
+                        UpdateContext({locEliminando: false});
+                        Notify(
+                            "No se pudo eliminar el producto. Inténtalo nuevamente.",
+                            NotificationType.Error
+                        )
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =ColorValue("#803333")
+                  Size: =18
+                  Text: |-
+                    =If(
+                        locEliminando,
+                        "Eliminando...",
+                        "Sí, eliminar"
+                    )
+                  Width: =BtnCancelarEliminar.Width
+                  X: =BtnCancelarEliminar.X + BtnCancelarEliminar.Width + 15
+                  Y: =250
